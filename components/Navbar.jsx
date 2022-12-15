@@ -1,15 +1,23 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { useEffect } from "react"
 const Navbar = ({setAccount,account}) => {
 
   const router = useRouter()
-
   
 
   const connectWallet = async() => {
     if(!window.ethereum) {
       alert("Please install MetaMask")
       return;
+    }
+    const chainId = await window.ethereum.request({method: "eth_chainId"})
+    console.log(chainId);
+    if(chainId != "0x13881") {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{chainId: "0x13881"}]
+      })
     }
 
     window.ethereum.request({method: "eth_requestAccounts"})
@@ -22,6 +30,14 @@ const Navbar = ({setAccount,account}) => {
       console.error(err)
     })
   }
+
+  useEffect(() => {
+    const connected = window.ethereum.isConnected();
+    if(!connected) {
+      connectWallet()
+    }
+  }, [])
+  
   return (
     <div 
      className="text-white h-20 w-full flex justify-between items-center  px-10 "
