@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.navdiv:hover{
+    border-bottom: 1px white solid;
+}
+.active_route{
+    border-bottom: 1px white solid;
+    
+}
+.market{
+    display: grid;
+    /* grid-template-columns: repeat(4,1fr); */
+    /* grid-row: 1fr 1fr ; */
+    /* grid-gap: 1rem; */
+}
+.image{
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+.nav_btn{
+    box-shadow: 0rem 0rem 1rem 0.1rem rgb(0, 255, 162);
+}
