@@ -33,7 +33,8 @@ const Navbar = ({setAccount,account}) => {
 
   useEffect(() => {
     const connected = window.ethereum.isConnected();
-    if(!connected) {
+    console.log("Nav",account);
+    if(account===null) {
       connectWallet()
     }
   }, [])

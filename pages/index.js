@@ -15,24 +15,42 @@ export default function Home() {
   const [dataFetched, setDataFetched] = useState(false)
   const [NFTs, setNFTs] = useState()
   useEffect(() => {
-    setAccount(window.ethereum.selectedAddress);
-    // getAllNFTs();
+    // setAccount(window.ethereum.selectedAddress);
+    console.log(account);
+    const connected = window.ethereum.isConnected();
+    if(account!=null){
+      console.log("Connected",connected);
+      getAllNFTs();
+    }
   }, []);
   const getAllNFTs = async () => {
+    console.log("Getting NFTs");
     const provider = new ethers.providers.Web3Provider(window.ethereum,"any");
+    await provider.send('eth_requestAccounts', []);
     const signer =  provider.getSigner();
-    console.log(signer,process.env.CONTRACT_ADDRESS);
+    // console.log(signer,process.env.CONTRACT_ADDRESS);
     const contract = new ethers.Contract(address, Market.abi, signer);
-    console.log(contract);
+    // console.log(contract);
     const transaction = await contract.getAllNFTS();
+
     // await transaction.wait();
     const items  = await Promise.all(
       transaction.map(async (item) => {
+        // console.log(item);
         const tokenUri = await contract.tokenURI(item.tokenId);
         // console.log(tokenUri);
-        let meta = await axios.get(tokenUri);
-        meta = meta.data;
-        console.log(Object.keys(meta)[0]);
+        let meta = await axios.get(tokenUri,{
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Headers":"content-type",
+            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+          }
+        });
+        meta = Object.keys(meta.data)[0];
+        // console.log(JSON.parse(meta));
+        meta = JSON.parse(meta);
+        // console.log(meta.name);
         let price = ethers.utils.formatUnits(item.price.toString(), "ether");
         let itemData = {
           price,
@@ -47,10 +65,10 @@ export default function Home() {
       })
     )
     setNFTs(items);
-    // console.log(items);
+    console.log(items);
     setDataFetched(true)
   };
-  if(!dataFetched){
+  if(!dataFetched && account!=null){
     getAllNFTs()
   }
   return (
@@ -70,7 +88,7 @@ export default function Home() {
             Explore Latest NFTs
           </h1>
           <div className="w-full h-screen my-4 px-8">
-            <Marketplace />
+            <Marketplace nfts={NFTs} />
           </div>
         </section>
       </main>

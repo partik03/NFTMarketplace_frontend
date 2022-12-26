@@ -5,7 +5,7 @@ import { uploadFileToIPFS,uploadJSONToIPFS } from '../pinata/pinata'
 import * as Marketplace from "../utils/abi.json"
 import { ethers } from 'ethers'
 const mynfts = () => { 
-    
+    const [account, setAccount] = useState(null)
     const [formParams, updateFormParams] = useState({name:'', description:'', price:''})
     const [message, setMessage] = useState(null)
     const [fileURL, setFileURL] = useState(null)
@@ -72,7 +72,7 @@ const mynfts = () => {
     <div 
     className='bg-primary w-screen '
     >
-        <Navbar/>
+        <Navbar setAccount={setAccount} account={account}/>
 
         <div>
             <ListNFTForm  formParams={formParams} message={message} onChangeFile={onChangeFile}  updateFormParams={updateFormParams} listNFT={listNFT} />
